@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Edukasi FPB & KPK (Pop Art Edition)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Comic+Neue:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, input, button { font-family: 'Comic Neue', cursive; font-weight: 700; }
+
+        body {
+            min-height: 100vh;
+            background-color: #4facfe;
+            background-image: radial-gradient(#ffffff 15%, transparent 16%), radial-gradient(#ffffff 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; color: #000;
+            overflow-x: hidden;
+        }
+
+        /* --- HALAMAN UTAMA (GAME) --- */
+        #game-view {
+            display: flex; justify-content: center; align-items: center; width: 100%;
+        }
+
+        .container {
+            background: #ffffff;
+            border: 4px solid #000; 
+            border-radius: 16px;
+            padding: 30px; width: 100%; max-width: 550px;
+            box-shadow: 12px 12px 0px #000; 
+            transition: all 0.3s ease;
+        }
+
+        /* --- HEADER --- */
+        .header-section {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; margin-bottom: 25px;
+        }
+
+        .logo-sempoa-header {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 4px solid #000; background-color: #fff;
+            object-fit: contain; padding: 5px; flex-shrink: 0;
+            box-shadow: 6px 6px 0px #000; margin-bottom: 15px; 
+        }
+
+        .comic-title {
+            font-family: 'Bungee', cursive; text-align: center; 
+            font-size: 38px; letter-spacing: 1px; color: #ffffff; 
+            -webkit-text-stroke: 2px #000; 
+            text-shadow: 
+                1px 1px 0 #000, 2px 2px 0 #000, 
+                3px 3px 0 #ff007a, 4px 4px 0 #ff007a, 5px 5px 0 #ff007a, 
+                6px 6px 0 #000, 
+                7px 7px 0 #00bcd4, 8px 8px 0 #00bcd4, 9px 9px 0 #00bcd4, 
+                10px 10px 0 #000;
+            line-height: 1.1; margin-bottom: 0; 
+        }
+
+        .author-text { text-align: center; font-size: 16px; margin-bottom: 5px; background: #000; color: #fff; display: inline-block; padding: 2px 10px; transform: rotate(-2deg); box-shadow: 3px 3px 0px #ff5252; margin-left: auto; margin-right: auto; display: block; width: fit-content; }
+        .subtitle { text-align: center; font-size: 15px; color: #333; margin-bottom: 20px; margin-top: 15px;}
+
+        /* Pengaturan Mode & Randomizer */
+        .controls-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
+        .mode-toggle { display: flex; background: #fff; border: 3px solid #000; border-radius: 8px; overflow: hidden; box-shadow: 4px 4px 0px #000; }
+        .mode-toggle label { padding: 8px 15px; font-size: 14px; cursor: pointer; color: #000; transition: 0.2s; border-right: 3px solid #000; }
+        .mode-toggle label:last-child { border-right: none; }
+        .mode-toggle input { display: none; }
+        .mode-toggle input:checked + label { background: #ffeb3b; }
+        
+        .btn-random { background: #00e676; color: #000; border: 3px solid #000; border-radius: 8px; padding: 8px 15px; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 4px 4px 0px #000; }
+        .btn-random:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+
+        .prime-hint { background: #fff; border: 3px dashed #000; border-radius: 12px; padding: 10px 15px; margin-bottom: 20px; font-size: 15px; color: #000; text-align: center; display: none; box-shadow: 4px 4px 0px #00bcd4; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        .input-group { display: flex; gap: 15px; margin-bottom: 20px; }
+        .input-wrapper { flex: 1; transition: all 0.3s; }
+        .input-wrapper label { display: block; font-size: 15px; margin-bottom: 8px; color: #000; text-align: center; background: #ffeb3b; border: 2px solid #000; border-radius: 5px; box-shadow: 2px 2px 0px #000; padding: 2px;}
+        .input-wrapper input { width: 100%; padding: 14px 10px; border-radius: 8px; font-size: 20px; text-align: center; outline: none; color: #000; background: #fff; border: 3px solid #000; box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1), 4px 4px 0px #000; transition: all 0.2s ease; }
+        .input-wrapper input:focus { background: #e3f2fd; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+
+        .btn-primary { width: 100%; padding: 16px; background: #ff5252; color: #fff; border: 4px solid #000; border-radius: 12px; font-size: 20px; cursor: pointer; transition: all 0.2s; box-shadow: 6px 6px 0px #000; font-family: 'Bungee', cursive; letter-spacing: 2px; }
+        .btn-primary:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0px #000; }
+
+        #play-area { display: none; animation: popIn 0.5s ease; margin-top: 15px; border-top: 4px solid #000; padding-top: 25px; }
+
+        .table-container { display: flex; justify-content: center; margin-bottom: 20px; width: 100%; overflow-x: auto;}
+        table { border-collapse: collapse; font-size: 20px; width: 100%; max-width: 450px; background: #fff; border: 4px solid #000; box-shadow: 6px 6px 0px #000; }
+        th, td { padding: 10px 5px; text-align: center; border: 3px solid #000; }
+        th { font-size: 20px; padding-bottom: 10px; background: #ffeb3b; font-family: 'Bungee', cursive; letter-spacing: 1px;}
+        td { height: 75px; background: #fafafa; }
+        th:first-child, td:first-child { background: #e1bee7; }
+
+        /* --- PERBAIKAN DAN PERBESARAN TANDA ÷ --- */
+        #header-div {
+            font-family: 'Comic Neue', sans-serif !important;
+            font-size: 60px !important; /* UKURAN SUPER BESAR */
+            font-weight: 900;
+            color: #d500f9; /* Warna Ungu Neon agar menonjol */
+            -webkit-text-stroke: 2px #000;
+            padding: 0;
+            line-height: 0.8;
+            vertical-align: middle;
+        }
+
+        .divisor-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .toggle-circle { width: 36px; height: 36px; border-radius: 50%; border: 3px solid #000; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: transparent; flex-shrink: 0; box-shadow: 2px 2px 0px #000; transition: 0.2s; }
+        .toggle-circle.active { background: #00e676; color: #000; transform: scale(1.1) rotate(-10deg); box-shadow: 4px 4px 0px #000;}
+
+        .cell-input { width: 55px; height: 45px; padding: 5px; font-size: 20px; border-radius: 8px; border: 3px solid #000; background: #fff; box-shadow: 3px 3px 0px #000; color: #000; text-align: center; outline: none; transition: all 0.2s; }
+        .cell-input:focus { background: #ffff00; transform: scale(1.1); z-index: 10; position: relative; }
+
+        .circle-final { display: inline-flex; justify-content: center; align-items: center; width: 42px; height: 42px; border-radius: 50%; border: 4px solid #ff1744; color: #000; font-size: 22px; background: #ff8a80; box-shadow: 2px 2px 0px #000; transform: rotate(5deg); }
+
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #00bcd4; padding: 20px; border-radius: 16px; margin-bottom: 30px; border: 4px solid #000; box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2), 6px 6px 0px #000;}
+        .num-btn { background: #fff; border: 3px solid #000; border-radius: 8px; padding: 15px; font-size: 22px; color: #000; cursor: pointer; transition: all 0.1s; box-shadow: 4px 4px 0px #000; }
+        .num-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #000; }
+        .num-btn.del { background: #ff5252; color: #fff; }
+        .num-btn.check { background: #ffeb3b; border: 3px solid #000; color: #000; font-family: 'Bungee', cursive; letter-spacing: 1px; font-size: 20px;}
+
+        #feedback { position: relative; text-align: center; font-size: 16px; margin-bottom: 35px; min-height: 40px; padding: 15px; border-radius: 16px; background: #fff; border: 4px solid #000; box-shadow: 6px 6px 0px #000; display: flex; align-items: center; justify-content: center; }
+        #feedback::before { content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); border-width: 0 15px 16px 15px; border-style: solid; border-color: transparent transparent #000 transparent; }
+        #feedback::after { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); border-width: 0 10px 12px 10px; border-style: solid; border-color: transparent transparent #fff transparent; }
+
+        .text-error { background: #ffcdd2 !important; animation: shake 0.4s ease; }
+        .text-error::after { border-color: transparent transparent #ffcdd2 transparent !important; }
+        .text-success { background: #c8e6c9 !important; }
+        .text-success::after { border-color: transparent transparent #c8e6c9 transparent !important; }
+        .text-hint { background: #bbdefb !important; }
+        .text-hint::after { border-color: transparent transparent #bbdefb transparent !important; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-5px) rotate(-2deg); } 50% { transform: translateX(5px) rotate(2deg); } 75% { transform: translateX(-5px) rotate(-2deg); } }
+
+        #final-quiz { display: none; background: #fff; border-radius: 16px; padding: 20px; border: 4px dashed #000; margin-bottom: 20px; animation: popIn 0.8s ease; box-shadow: 6px 6px 0px #000;}
+        .quiz-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .formula-text { font-size: 18px; margin-right: 10px; flex: 1; text-align: right;}
+        .formula-text span { color: #d50000; font-size: 20px; background: #ffeb3b; padding: 2px 8px; border: 2px solid #000; border-radius: 5px; box-shadow: 2px 2px 0px #000;}
+        .quiz-row .label { background: #000; color: #fff; padding: 5px 10px; border-radius: 5px; transform: rotate(-3deg); font-family: 'Bungee', cursive; font-size: 18px; width: 60px; text-align: center; box-shadow: 3px 3px 0px #00bcd4;}
+        .quiz-input { width: 90px; padding: 10px; font-size: 20px; text-align: center; border-radius: 8px; border: 3px solid #000; outline: none; transition: all 0.3s ease; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 4px 4px 0px #000; }
+        .quiz-input:focus { background: #ffff00; transform: scale(1.05); }
+        
+        /* --- TINGKATAN KEMENANGAN (WIN SCREEN) --- */
+        #win-view {
+            display: none; /* Sembunyi secara default */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffeb3b; /* Kuning Pop */
+            background-image: radial-gradient(#000 10%, transparent 11%), radial-gradient(#000 10%, transparent 11%);
+            background-size: 30px 30px; background-position: 0 0, 15px 15px;
+            z-index: 9999; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px; text-align: center; overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .win-content {
+            background: #fff; border: 6px solid #000; border-radius: 24px;
+            padding: 40px; max-width: 500px; width: 100%;
+            box-shadow: 15px 15px 0px #000;
+            display: flex; flex-direction: column; align-items: center;
+            animation: popInWin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+        }
+
+        @keyframes popInWin { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .win-title {
+            font-family: 'Bungee', cursive; font-size: 45px; letter-spacing: 2px;
+            color: #ff5252; -webkit-text-stroke: 2px #000;
+            text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+            margin-bottom: 25px; line-height: 1;
+            animation: winTextPulsate 1s infinite alternate;
+        }
+
+        @keyframes winTextPulsate { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+        /* --- STYLING GAMBAR JEMPOL KEREN (CROP LINGKARAN + EFEK NEON) --- */
+        .jempol-container {
+            width: 180px; height: 180px;
+            border-radius: 50%; /* CROP LINGKARAN PERFECT */
+            border: 8px solid #000;
+            background: #fff;
+            overflow: hidden; /* Memastikan konten di dalam terpotong lingkaran */
+            box-shadow: 8px 8px 0px #000;
+            margin-bottom: 30px;
+            position: relative;
+            /* EFEK BINGKAI NEON BERDENYUT */
+            animation: neonPulse 1.5s infinite;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { box-shadow: 8px 8px 0px #000, 0 0 10px #ff007a, 0 0 20px #ff007a; }
+            33% { box-shadow: 8px 8px 0px #000, 0 0 15px #00bcd4, 0 0 30px #00bcd4; }
+            66% { box-shadow: 8px 8px 0px #000, 0 0 20px #ffeb3b, 0 0 40px #ffeb3b; }
+        }
+
+        .img-jempol {
+            width: 100%; height: 100%;
+            object-fit: cover; /* Memastikan gambar memenuhi lingkaran tanpa gepeng */
+            transform: scale(1.1); /* Sedikit zoom agar pas di lingkaran */
+        }
+
+        .win-text { font-size: 18px; color: #000; margin-bottom: 30px; font-weight: 900;}
+
+        #resetBtnWin {
+            background: #00e676; /* Hijau Pop */
+            font-family: 'Bungee', cursive; letter-spacing: 2px;
+            color: #000; font-size: 22px; padding: 18px;
+            width: 100%; border: 4px solid #000; border-radius: 12px;
+            box-shadow: 6px 6px 0px #000; cursor: pointer;
+            transition: all 0.2s;
+        }
+        #resetBtnWin:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0px #000; }
+
+        /* --- RESPONSIVE UNTUK ÷ DAN WIN SCREEN --- */
+        @media (max-width: 480px) {
+            #header-div { font-size: 40px !important; } /* ÷ sedikit dikecilkan di HP agar muat */
+            .comic-title { font-size: 26px; text-shadow: 1px 1px 0 #000, 2px 2px 0 #ff007a, 3px 3px 0 #ff007a, 4px 4px 0 #ff007a, 5px 5px 0 #000, 6px 6px 0 #00bcd4, 7px 7px 0 #00bcd4, 8px 8px 0 #00bcd4, 9px 9px 0 #000; }
+            .win-title { font-size: 30px; }
+            .win-content { padding: 25px; }
+            .jempol-container { width: 130px; height: 130px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-view">
+        <div class="container">
+            <div class="header-section">
+                <img src="https://raw.githubusercontent.com/dosen-uinsi/SENGKEDAN-FPB-KPK/refs/heads/main/Sempoa.gif" alt="Logo Sempoa" class="logo-sempoa-header">
+                <div class="title-group">
+                    <h1 class="comic-title">SENGKEDAN</h1>
+                    <h1 class="comic-title">FPB & KPK</h1>
+                </div>
+            </div>
+            
+            <div class="author-text">By Mathnology</div>
+            <div class="subtitle">Isi angka dan tandai (⭕) sendiri pembagi FPB-nya!</div>
+            
+            <div class="prime-hint" id="primeBox">
+                💡 <b>BILANGAN PRIMA:</b> <span>2, 3, 5, 7, 11, 13, 17, 19, 23...</span>
+            </div>
+
+            <div id="setup-area">
+                <div class="controls-header">
+                    <div class="mode-toggle">
+                        <input type="radio" id="mode2" name="gameMode" value="2" checked onchange="changeMode()">
+                        <label for="mode2">2 Angka</label>
+                        <input type="radio" id="mode3" name="gameMode" value="3" onchange="changeMode()">
+                        <label for="mode3">3 Angka</label>
+                    </div>
+                    <button class="btn-random" onclick="generateRandom()">🎲 Soal Acak</button>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Bilangan A</label>
+                        <input type="number" id="num1" placeholder="18" value="18" inputmode="none">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>Bilangan B</label>
+                        <input type="number" id="num2" placeholder="24" value="24" inputmode="none">
+                    </div>
+                    <div class="input-wrapper" id="wrap-num3" style="display: none;">
+                        <label>Bilangan C</label>
+                        <input type="number" id="num3" placeholder="36" value="36" inputmode="none">
+                    </div>
+                </div>
+                <button id="startBtn" class="btn-primary" onclick="startGame()">Mulai Petualangan!</button>
+            </div>
+
+            <div id="play-area">
+                <div class="table-container">
+                    <table id="mathTable">
+                        <thead>
+                            <tr id="table-head-row">
+                                <th id="header-div">÷</th>
+                                <th id="header-a">A</th>
+                                <th id="header-b">B</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                
+                <div id="feedback">Ketuk kotak, isi angkanya!</div>
+
+                <div class="numpad" id="virtual-numpad">
+                    <button class="num-btn" onclick="typeNum(1)">1</button><button class="num-btn" onclick="typeNum(2)">2</button><button class="num-btn" onclick="typeNum(3)">3</button>
+                    <button class="num-btn" onclick="typeNum(4)">4</button><button class="num-btn" onclick="typeNum(5)">5</button><button class="num-btn" onclick="typeNum(6)">6</button>
+                    <button class="num-btn" onclick="typeNum(7)">7</button><button class="num-btn" onclick="typeNum(8)">8</button><button class="num-btn" onclick="typeNum(9)">9</button>
+                    <button class="num-btn del" onclick="deleteNum()">⌫</button><button class="num-btn" onclick="typeNum(0)">0</button><button class="num-btn check" id="actionBtn" onclick="handleAction()">Cek ✓</button>
+                </div>
+
+                <div id="final-quiz">
+                    <div class="quiz-row">
+                        <span class="label">FPB</span>
+                        <div class="formula-text" id="fpb-formula"></div>
+                        <input type="number" id="ans-fpb" class="quiz-input" placeholder="?" inputmode="none">
+                    </div>
+                    <div class="quiz-row">
+                        <span class="label">KPK</span>
+                        <div class="formula-text" id="kpk-formula"></div>
+                        <input type="number" id="ans-kpk" class="quiz-input" placeholder="?" inputmode="none">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-view">
+        <div class="win-content">
+            <h1 class="win-title">LUAR BIASA!</h1>
+            
+            <div class="jempol-container">
+                <img src="https://raw.githubusercontent.com/dosen-uinsi/SENGKEDAN-FPB-KPK/refs/heads/main/JEMPOL.gif" alt="Jempol Sukses" class="img-jempol">
+            </div>
+
+            <p class="win-text">🎉 Selamat! Kamu telah berhasil menaklukkan tantangan SENGKEDAN FPB & KPK dengan sempurna. Kamu adalah Master Matematika Pop! 🎉</p>
+            
+            <button id="resetBtnWin" onclick="location.reload()">MAIN LAGI, YUK!</button>
+        </div>
+    </div>
+
+<script>
+    // --- SISTEM AUDIO WEB API (EFEK SUARA) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'type') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+            gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'delete') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+            gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'toggle') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(700, now + 0.1);
+            gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.4);
+            gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'success') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.setValueAtTime(900, now + 0.1);
+            gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'start') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'win') {
+            osc.type = 'triangle'; gain.gain.setValueAtTime(0.4, now); gain.gain.linearRampToValueAtTime(0, now + 1.2);
+            osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); osc.frequency.setValueAtTime(783.99, now + 0.2); osc.frequency.setValueAtTime(1046.50, now + 0.3); osc.frequency.setValueAtTime(1318.51, now + 0.4);
+            osc.start(now); osc.stop(now + 1.2);
+        }
+    }
+
+    // --- SISTEM GETARAN (VIBRATION API) ---
+    function vibrate(duration) {
+        if ("vibrate" in navigator) {
+            navigator.vibrate(duration);
+        }
+    }
+
+    let currentMode = 2;
+    let startA, startB, startC;
+    let currentA, currentB, currentC;
+    let trueFPB = 1, trueKPK = 1;
+    let isCurrentDivisorCircled = false;
+    let activeInput = null;
+    let gameState = "playing"; 
+    
+    let errorCount = 0; 
+    let userFactorsFPB = [];
+    let userFactorsKPK = [];
+
+    function showFeedback(text, type) {
+        const fb = document.getElementById('feedback'); 
+        fb.innerText = text; fb.className = type;
+        
+        if(type === 'text-error') { 
+            playSound('error'); vibrate(200); // Getar agak lama kalau salah
+            fb.classList.remove('text-error'); void fb.offsetWidth; fb.classList.add('text-error'); 
+        } else if (type === 'text-success' || type === 'text-hint') {
+            playSound('success'); vibrate(50); // Getar singkat kalau benar
+        } else if (type === 'text-win') {
+            // Suara Win dihandle langsung di fungsi checkFinalQuiz
+        }
+    }
+
+    function changeMode() {
+        playSound('toggle'); vibrate(50);
+        currentMode = parseInt(document.querySelector('input[name="gameMode"]:checked').value);
+        document.getElementById('wrap-num3').style.display = currentMode === 3 ? 'block' : 'none';
+    }
+
+    function generateRandom() {
+        playSound('type'); vibrate(30);
+        document.getElementById('num1').value = Math.floor(Math.random() * 40) + 12; 
+        document.getElementById('num2').value = Math.floor(Math.random() * 40) + 12;
+        if (currentMode === 3) { document.getElementById('num3').value = Math.floor(Math.random() * 40) + 12; }
+    }
+
+    document.addEventListener('focusin', (e) => { 
+        if(e.target.tagName === 'INPUT' && e.target.type === 'number') { activeInput = e.target; playSound('click'); vibrate(20); }
+    });
+
+    function typeNum(num) { 
+        playSound('type'); vibrate(30);
+        if (activeInput) { if(activeInput.value === "0") activeInput.value = num; else activeInput.value += num; } 
+    }
+
+    function deleteNum() { 
+        playSound('delete'); vibrate(40);
+        if (activeInput && activeInput.value.length > 0) activeInput.value = activeInput.value.slice(0, -1); 
+    }
+
+    function handleAction() { if(gameState === "playing") checkRow(); else if(gameState === "final_quiz") checkFinalQuiz(); }
+
+    function isPrime(num) {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+        if (num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) { if (num % i === 0 || num % (i + 2) === 0) return false; }
+        return true;
+    }
+
+    function startGame() {
+        startA = parseInt(document.getElementById('num1').value); startB = parseInt(document.getElementById('num2').value); startC = currentMode === 3 ? parseInt(document.getElementById('num3').value) : 1;
+        if (isNaN(startA) || isNaN(startB) || startA < 1 || startB < 1 || (currentMode === 3 && (isNaN(startC) || startC < 1))) { showFeedback("Masukkan angka yang valid dulu, kawan!", "text-error"); return; }
+        playSound('start'); vibrate([50, 50, 50]);
+        currentA = startA; currentB = startB; currentC = startC; calculateHiddenAnswers();
+        document.getElementById('setup-area').style.display = 'none'; document.getElementById('primeBox').style.display = 'block'; 
+        document.getElementById('header-a').innerText = startA; document.getElementById('header-b').innerText = startB;
+        const headRow = document.getElementById('table-head-row');
+        if (currentMode === 3) { const thC = document.createElement('th'); thC.id = 'header-c'; thC.innerText = startC; headRow.appendChild(thC); }
+        document.getElementById('play-area').style.display = 'block'; createInputRow();
+        showFeedback("Bagus! Sekarang bagikan dengan bilangan prima terkecil!", "text-hint");
+    }
+
+    function toggleCircle() {
+        if(gameState !== "playing") return;
+        playSound('toggle'); vibrate(40);
+        isCurrentDivisorCircled = !isCurrentDivisorCircled;
+        const btn = document.getElementById('circleToggle');
+        if(isCurrentDivisorCircled) { btn.classList.add('active'); btn.innerText = "✔"; } else { btn.classList.remove('active'); btn.innerText = ""; }
+    }
+
+    function createInputRow() {
+        isCurrentDivisorCircled = false; errorCount = 0; 
+        const tbody = document.getElementById('table-body'); const tr = document.createElement('tr'); tr.id = 'active-row';
+        let rowHTML = `<td><div class="divisor-wrapper"><div class="toggle-circle" id="circleToggle" onclick="toggleCircle()"></div><input type="number" id="in-div" class="cell-input" placeholder="P" inputmode="none"></div></td><td><input type="number" id="in-a" class="cell-input" placeholder="..." inputmode="none"></td><td><input type="number" id="in-b" class="cell-input" placeholder="..." inputmode="none"></td>`;
+        if (currentMode === 3) { rowHTML += `<td><input type="number" id="in-c" class="cell-input" placeholder="..." inputmode="none"></td>`; }
+        tr.innerHTML = rowHTML; tbody.appendChild(tr);
+        document.getElementById('in-div').focus(); activeInput = document.getElementById('in-div');
+    }
+
+    function checkRow() {
+        const inDiv = parseInt(document.getElementById('in-div').value); const inA = parseInt(document.getElementById('in-a').value); const inB = parseInt(document.getElementById('in-b').value); const inC = currentMode === 3 ? parseInt(document.getElementById('in-c').value) : 1;
+        if (isNaN(inDiv) || isNaN(inA) || isNaN(inB) || (currentMode === 3 && isNaN(inC))) { showFeedback("Hei! Lengkapi semua kotak yang kosong dulu ya!", "text-error"); return; }
+        if (!isPrime(inDiv)) { handleError(`ZONK! ${inDiv} BUKAN bilangan prima! Lirik kotak biru di atas.`); return; }
+        let expectedA = (currentA % inDiv === 0) ? currentA / inDiv : currentA; let expectedB = (currentB % inDiv === 0) ? currentB / inDiv : currentB; let expectedC = (currentC % inDiv === 0) ? currentC / inDiv : currentC;
+        let divA = (currentA % inDiv === 0); let divB = (currentB % inDiv === 0); let divC = currentMode === 3 ? (currentC % inDiv === 0) : true;
+        let dividesAny = divA || divB || (currentMode === 3 && divC); let dividesAll = divA && divB && divC;
+        if (!dividesAny) { handleError(`Waduh, angka ${inDiv} tidak bisa membagi baris ini. Coba angka lain!`); return; }
+        if (inA !== expectedA) { if (!divA && inA !== currentA) handleError(`Kolom A: ${currentA} tak bisa dibagi rata ${inDiv}. Turunkan saja angkanya!`); else handleError(`Hitungan Kolom A salah! Berapa ${currentA} dibagi ${inDiv}?`); return; }
+        if (inB !== expectedB) { if (!divB && inB !== currentB) handleError(`Kolom B: ${currentB} tak bisa dibagi rata ${inDiv}. Turunkan saja angkanya!`); else handleError(`Hitungan Kolom B salah! Berapa ${currentB} dibagi ${inDiv}?`); return; }
+        if (currentMode === 3 && inC !== expectedC) { if (!divC && inC !== currentC) handleError(`Kolom C: ${currentC} tak bisa dibagi rata ${inDiv}. Turunkan saja angkanya!`); else handleError(`Hitungan Kolom C salah! Berapa ${currentC} dibagi ${inDiv}?`); return; }
+        if (isCurrentDivisorCircled && !dividesAll) { handleError("Tunggu! Angka ini tak membagi SEMUA kolom, JANGAN dilingkari!"); return; }
+        if (!isCurrentDivisorCircled && dividesAll) { handleError("Aha! Angka ini membagi SEMUANYA. Klik lingkarannya (⭕)!"); return; }
+        userFactorsKPK.push(inDiv); if (dividesAll) userFactorsFPB.push(inDiv);
+        const activeRow = document.getElementById('active-row'); activeRow.removeAttribute('id'); let divDisplay = dividesAll ? `<span class="circle-final">${inDiv}</span>` : inDiv;
+        let finalRowHTML = `<td>${divDisplay}</td><td>${inA}</td><td>${inB}</td>`;
+        if (currentMode === 3) finalRowHTML += `<td>${inC}</td>`;
+        activeRow.innerHTML = finalRowHTML; currentA = inA; currentB = inB; currentC = inC;
+        let gameFinished = currentMode === 2 ? (currentA === 1 && currentB === 1) : (currentA === 1 && currentB === 1 && currentC === 1);
+        if (gameFinished) { triggerFinalPhase(); } else { showFeedback("MANTAP! Ayo lanjut ke baris berikutnya!", "text-success"); createInputRow(); }
+    }
+
+    function handleError(msg) {
+        errorCount++;
+        if (errorCount >= 3) {
+            let correctDivisor = 2;
+            while(currentA % correctDivisor !== 0 && currentB % correctDivisor !== 0 && (currentMode === 2 || currentC % correctDivisor !== 0)) correctDivisor++;
+            showFeedback(`Psst... Coba isi kolom P dengan angka ${correctDivisor}!`, "text-hint");
+        } else { showFeedback(msg, "text-error"); }
+    }
+
+    function triggerFinalPhase() {
+        gameState = "final_quiz"; playSound('success'); vibrate([50, 50]);
+        showFeedback("Tabel Selesai! Sekarang selesaikan pertarungan terakhir di bawah!", "text-success");
+        const fpbStr = userFactorsFPB.length > 0 ? userFactorsFPB.join(" × ") : "1 (Kosong)"; const kpkStr = userFactorsKPK.join(" × ");
+        document.getElementById('fpb-formula').innerHTML = `<span>${fpbStr}</span> =`; document.getElementById('kpk-formula').innerHTML = `<span>${kpkStr}</span> =`;
+        document.getElementById('final-quiz').style.display = 'block'; document.getElementById('ans-fpb').focus(); activeInput = document.getElementById('ans-fpb');
+    }
+
+    function checkFinalQuiz() {
+        const userFPB = parseInt(document.getElementById('ans-fpb').value); const userKPK = parseInt(document.getElementById('ans-kpk').value);
+        if (isNaN(userFPB) || isNaN(userKPK)) { showFeedback("Isi kedua kotak akhir untuk memenangkan permainan!", "text-error"); return; }
+        if (userFPB === trueFPB && userKPK === trueKPK) {
+            // --- PEMICU KEMENANGAN (WIN SCREEN) ---
+            gameState = "done";
+            playSound('win'); vibrate([100, 50, 100, 50, 300]); // Getaran kemenangan yang keren
+            
+            // Sembunyikan area game, tampilkan area Win
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('win-view').style.display = 'flex';
+        } else { showFeedback("Duh, hasil akhirnya masih meleset. Coba hitung perkaliannya lagi!", "text-error"); }
+    }
+
+    function calculateHiddenAnswers() {
+        let tempA = startA, tempB = startB, tempC = currentMode === 3 ? startC : 1; let divisor = 2, factorsFPB = [], factorsKPK = [];
+        while (tempA > 1 || tempB > 1 || (currentMode === 3 && tempC > 1)) {
+            let divA = tempA % divisor === 0; let divB = tempB % divisor === 0; let divC = currentMode === 3 ? tempC % divisor === 0 : true;
+            if (divA || divB || (currentMode === 3 && divC)) {
+                if (divA && divB && divC) factorsFPB.push(divisor);
+                factorsKPK.push(divisor);
+                if (divA) tempA /= divisor; if (divB) tempB /= divisor; if (currentMode === 3 && divC) tempC /= divisor;
+            } else { divisor++; }
+        }
+        trueFPB = factorsFPB.reduce((acc, val) => acc * val, 1); trueKPK = factorsKPK.reduce((acc, val) => acc * val, 1);
+    }
+</script>
+
+</body>
+</html>
