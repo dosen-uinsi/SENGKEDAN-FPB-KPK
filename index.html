@@ -119,7 +119,23 @@
         .num-btn.del { background: #ff5252; color: #fff; }
         .num-btn.check { background: #ffeb3b; border: 3px solid #000; color: #000; font-family: 'Bungee', cursive; letter-spacing: 1px; font-size: 20px;}
 
-        #feedback { position: relative; text-align: center; font-size: 16px; margin-bottom: 20px; min-height: 40px; padding: 15px; border-radius: 16px; background: #fff; border: 4px solid #000; box-shadow: 6px 6px 0px #000; display: flex; align-items: center; justify-content: center; }
+        /* --- PENAMBAHAN MARGIN TOP PADA FEEDBACK AGAR TIDAK NABRAK --- */
+        #feedback { 
+            position: relative; 
+            text-align: center; 
+            font-size: 16px; 
+            margin-top: 30px; /* Jarak atas ditambahkan */
+            margin-bottom: 20px; 
+            min-height: 40px; 
+            padding: 15px; 
+            border-radius: 16px; 
+            background: #fff; 
+            border: 4px solid #000; 
+            box-shadow: 6px 6px 0px #000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         #feedback::before { content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); border-width: 0 15px 16px 15px; border-style: solid; border-color: transparent transparent #000 transparent; }
         #feedback::after { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); border-width: 0 10px 12px 10px; border-style: solid; border-color: transparent transparent #fff transparent; }
 
@@ -367,7 +383,6 @@
     let userFactorsFPB = [];
     let userFactorsKPK = [];
 
-    // --- INISIALISASI INPUT AKTIF SAAT LOAD ---
     window.onload = () => {
         setActive(document.getElementById('num1'));
     };
@@ -399,11 +414,9 @@
         setActive(document.getElementById('num1'));
     }
 
-    // --- MENGELOLA FOKUS INPUT READONLY ---
     document.addEventListener('focusin', (e) => { 
         if(e.target.tagName === 'INPUT') setActive(e.target);
     });
-    // Fallback click jika focusin tidak jalan di readonly iOS
     document.addEventListener('click', (e) => { 
         if(e.target.tagName === 'INPUT' && e.target.type === 'text') setActive(e.target);
     });
@@ -418,12 +431,11 @@
         }
     }
 
-    // --- LISTENER KEYBOARD LAPTOP ---
     document.addEventListener('keydown', (e) => {
         if (e.key >= '0' && e.key <= '9') {
             typeNum(e.key);
         } else if (e.key === 'Backspace') {
-            e.preventDefault(); // cegah browser back
+            e.preventDefault(); 
             deleteNum();
         } else if (e.key === 'Enter') {
             handleAction();
@@ -433,7 +445,7 @@
     function typeNum(num) { 
         playSound('type'); vibrate(30);
         if (activeInput) { 
-            if(activeInput.value === "0") activeInput.value = num; 
+            if(activeInput.value === "0" || activeInput.value === "") activeInput.value = num; 
             else activeInput.value += num; 
         } 
     }
@@ -473,42 +485,36 @@
         if (currentMode === 3) { const thC = document.createElement('th'); thC.id = 'header-c'; thC.innerText = startC; headRow.appendChild(thC); }
         
         document.getElementById('play-area').style.display = 'block'; 
-        document.getElementById('homeBtn').style.display = 'block'; // Tampilkan tombol home
+        document.getElementById('homeBtn').style.display = 'block'; 
         createInputRow();
         showFeedback("Bagus! Sekarang bagikan dengan bilangan prima terkecil!", "text-hint");
     }
 
-    // --- FUNGSI KEMBALI KE MENU UTAMA ---
     function goHome() {
         playSound('toggle'); vibrate(50);
         gameState = "setup";
         
-        // Sembunyikan elemen mode bermain
         document.getElementById('play-area').style.display = 'none';
         document.getElementById('primeBox').style.display = 'none';
         document.getElementById('final-quiz').style.display = 'none';
         document.getElementById('homeBtn').style.display = 'none';
         
-        // Tampilkan kembali elemen setup
         document.getElementById('setup-area').style.display = 'block';
         
-        // Bersihkan area tabel (kecuali header utama)
         document.getElementById('table-body').innerHTML = '';
         const headRow = document.getElementById('table-head-row');
         const thC = document.getElementById('header-c');
-        if (thC) headRow.removeChild(thC); // Hapus header C jika sebelumnya mode 3 angka
+        if (thC) headRow.removeChild(thC); 
         
-        // Reset kotak jawaban kuis akhir
         document.getElementById('ans-fpb').value = '';
         document.getElementById('ans-kpk').value = '';
         
-        // Reset state game
         errorCount = 0;
         userFactorsFPB = [];
         userFactorsKPK = [];
         
         showFeedback("Pilih kotak, lalu ketik angkanya!", "text-hint");
-        setActive(document.getElementById('num1')); // Arahkan fokus kembali ke input A
+        setActive(document.getElementById('num1')); 
     }
 
     function toggleCircle() {
@@ -523,7 +529,6 @@
         isCurrentDivisorCircled = false; errorCount = 0; 
         const tbody = document.getElementById('table-body'); const tr = document.createElement('tr'); tr.id = 'active-row';
         
-        // Input diset readonly agar keyboard bawaan hape tidak muncul
         let rowHTML = `<td><div class="divisor-wrapper"><div class="toggle-circle" id="circleToggle" onclick="toggleCircle()"></div><input type="text" id="in-div" class="cell-input" placeholder="P" readonly></div></td>
         <td><input type="text" id="in-a" class="cell-input" placeholder="..." readonly></td>
         <td><input type="text" id="in-b" class="cell-input" placeholder="..." readonly></td>`;
