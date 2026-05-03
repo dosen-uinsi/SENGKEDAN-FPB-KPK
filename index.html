@@ -99,12 +99,12 @@
         td { height: 75px; background: #fafafa; }
         th:first-child, td:first-child { background: #e1bee7; }
 
-        /* --- PERBAIKAN DAN PERBESARAN TANDA ÷ --- */
+        /* --- PERBAIKAN TANDA ÷ --- */
         #header-div {
             font-family: 'Comic Neue', sans-serif !important;
-            font-size: 60px !important; /* UKURAN SUPER BESAR */
+            font-size: 60px !important;
             font-weight: 900;
-            color: #d500f9; /* Warna Ungu Neon agar menonjol */
+            color: #d500f9;
             -webkit-text-stroke: 2px #000;
             padding: 0;
             line-height: 0.8;
@@ -147,17 +147,17 @@
         .quiz-input { width: 90px; padding: 10px; font-size: 20px; text-align: center; border-radius: 8px; border: 3px solid #000; outline: none; transition: all 0.3s ease; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 4px 4px 0px #000; }
         .quiz-input:focus { background: #ffff00; transform: scale(1.05); }
         
-        /* --- TINGKATAN KEMENANGAN (WIN SCREEN) --- */
+        /* --- TINGKATAN KEMENANGAN (WIN SCREEN / POP UP) --- */
         #win-view {
-            display: none; /* Sembunyi secara default */
+            display: none; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffeb3b; /* Kuning Pop */
-            background-image: radial-gradient(#000 10%, transparent 11%), radial-gradient(#000 10%, transparent 11%);
-            background-size: 30px 30px; background-position: 0 0, 15px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 9999; flex-direction: column; justify-content: center; align-items: center;
-            padding: 30px; text-align: center; overflow: hidden;
+            padding: 20px; text-align: center; overflow: hidden;
             animation: fadeIn 0.5s ease;
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .win-content {
             background: #fff; border: 6px solid #000; border-radius: 24px;
@@ -179,17 +179,15 @@
 
         @keyframes winTextPulsate { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-        /* --- STYLING GAMBAR JEMPOL KEREN (CROP LINGKARAN + EFEK NEON) --- */
         .jempol-container {
             width: 180px; height: 180px;
-            border-radius: 50%; /* CROP LINGKARAN PERFECT */
+            border-radius: 50%; 
             border: 8px solid #000;
             background: #fff;
-            overflow: hidden; /* Memastikan konten di dalam terpotong lingkaran */
+            overflow: hidden; 
             box-shadow: 8px 8px 0px #000;
             margin-bottom: 30px;
             position: relative;
-            /* EFEK BINGKAI NEON BERDENYUT */
             animation: neonPulse 1.5s infinite;
         }
 
@@ -201,14 +199,12 @@
 
         .img-jempol {
             width: 100%; height: 100%;
-            object-fit: cover; /* Memastikan gambar memenuhi lingkaran tanpa gepeng */
-            transform: scale(1.1); /* Sedikit zoom agar pas di lingkaran */
+            object-fit: cover; 
+            transform: scale(1.1); 
         }
 
-        .win-text { font-size: 18px; color: #000; margin-bottom: 30px; font-weight: 900;}
-
         #resetBtnWin {
-            background: #00e676; /* Hijau Pop */
+            background: #00e676; 
             font-family: 'Bungee', cursive; letter-spacing: 2px;
             color: #000; font-size: 22px; padding: 18px;
             width: 100%; border: 4px solid #000; border-radius: 12px;
@@ -217,13 +213,51 @@
         }
         #resetBtnWin:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0px #000; }
 
-        /* --- RESPONSIVE UNTUK ÷ DAN WIN SCREEN --- */
-        @media (max-width: 480px) {
-            #header-div { font-size: 40px !important; } /* ÷ sedikit dikecilkan di HP agar muat */
-            .comic-title { font-size: 26px; text-shadow: 1px 1px 0 #000, 2px 2px 0 #ff007a, 3px 3px 0 #ff007a, 4px 4px 0 #ff007a, 5px 5px 0 #000, 6px 6px 0 #00bcd4, 7px 7px 0 #00bcd4, 8px 8px 0 #00bcd4, 9px 9px 0 #000; }
-            .win-title { font-size: 30px; }
-            .win-content { padding: 25px; }
-            .jempol-container { width: 130px; height: 130px; }
+        /* --- RESPONSIVE UNTUK HP DAN LAYAR KECIL --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; border-width: 3px; box-shadow: 8px 8px 0px #000; }
+            .comic-title { font-size: 30px; }
+            .logo-sempoa-header { width: 65px; height: 65px; margin-bottom: 10px; }
+            .input-group { gap: 10px; }
+            .input-wrapper input { padding: 10px 5px; font-size: 18px; }
+            .btn-primary { padding: 12px; font-size: 18px; }
+            
+            /* Penyesuaian Tabel & Input */
+            .table-container { margin-bottom: 15px; }
+            th, td { padding: 5px 2px; }
+            th { font-size: 16px; padding-bottom: 5px; }
+            td { height: 55px; }
+            .cell-input { width: 40px; height: 35px; font-size: 16px; padding: 2px; border-width: 2px; }
+            .toggle-circle { width: 28px; height: 28px; font-size: 12px; border-width: 2px; }
+            .circle-final { width: 32px; height: 32px; font-size: 16px; border-width: 3px; }
+            #header-div { font-size: 45px !important; }
+
+            /* Numpad Virtual */
+            .numpad { padding: 15px; gap: 8px; }
+            .num-btn { padding: 12px; font-size: 18px; }
+            .num-btn.check { font-size: 16px; padding: 12px 5px; }
+
+            /* Final Quiz */
+            .quiz-row { flex-wrap: wrap; justify-content: center; gap: 8px; text-align: center; margin-bottom: 20px;}
+            .formula-text { flex: none; width: 100%; text-align: center; margin-right: 0; margin-bottom: 5px;}
+            .quiz-input { width: 80px; padding: 8px; font-size: 18px; }
+
+            /* Win Pop Up */
+            .win-content { padding: 25px 20px; border-width: 4px; box-shadow: 10px 10px 0px #000; }
+            .win-title { font-size: 32px; margin-bottom: 15px; }
+            .jempol-container { width: 130px; height: 130px; border-width: 6px; }
+            #resetBtnWin { padding: 15px; font-size: 18px; }
+        }
+
+        /* Optimasi tambahan untuk HP layar ekstra sempit (iPhone SE / Lipat) */
+        @media (max-width: 360px) {
+            .comic-title { font-size: 24px; text-shadow: 1px 1px 0 #000, 2px 2px 0 #ff007a, 3px 3px 0 #ff007a, 4px 4px 0 #ff007a, 5px 5px 0 #000, 6px 6px 0 #00bcd4, 7px 7px 0 #00bcd4, 8px 8px 0 #00bcd4, 9px 9px 0 #000; }
+            .cell-input { width: 35px; height: 30px; font-size: 14px; }
+            .toggle-circle { width: 24px; height: 24px; font-size: 10px; }
+            .numpad { padding: 10px; gap: 6px; }
+            .num-btn { padding: 10px; font-size: 16px; }
+            #header-div { font-size: 35px !important; }
         }
     </style>
 </head>
@@ -271,7 +305,7 @@
                         <input type="number" id="num3" placeholder="36" value="36" inputmode="none">
                     </div>
                 </div>
-                <button id="startBtn" class="btn-primary" onclick="startGame()">Mulai Petualangan!</button>
+                <button id="startBtn" class="btn-primary" onclick="startGame()">MULAI</button>
             </div>
 
             <div id="play-area">
@@ -320,10 +354,8 @@
             <div class="jempol-container">
                 <img src="https://raw.githubusercontent.com/dosen-uinsi/SENGKEDAN-FPB-KPK/refs/heads/main/JEMPOL.gif" alt="Jempol Sukses" class="img-jempol">
             </div>
-
-            <p class="win-text">🎉 Selamat! Kamu telah berhasil menaklukkan tantangan SENGKEDAN FPB & KPK dengan sempurna. Kamu adalah Master Matematika Pop! 🎉</p>
             
-            <button id="resetBtnWin" onclick="location.reload()">MAIN LAGI, YUK!</button>
+            <button id="resetBtnWin" onclick="closeWinPopup()">KEMBALI</button>
         </div>
     </div>
 
@@ -395,10 +427,10 @@
         fb.innerText = text; fb.className = type;
         
         if(type === 'text-error') { 
-            playSound('error'); vibrate(200); // Getar agak lama kalau salah
+            playSound('error'); vibrate(200); 
             fb.classList.remove('text-error'); void fb.offsetWidth; fb.classList.add('text-error'); 
         } else if (type === 'text-success' || type === 'text-hint') {
-            playSound('success'); vibrate(50); // Getar singkat kalau benar
+            playSound('success'); vibrate(50); 
         } else if (type === 'text-win') {
             // Suara Win dihandle langsung di fungsi checkFinalQuiz
         }
@@ -514,14 +546,18 @@
         const userFPB = parseInt(document.getElementById('ans-fpb').value); const userKPK = parseInt(document.getElementById('ans-kpk').value);
         if (isNaN(userFPB) || isNaN(userKPK)) { showFeedback("Isi kedua kotak akhir untuk memenangkan permainan!", "text-error"); return; }
         if (userFPB === trueFPB && userKPK === trueKPK) {
-            // --- PEMICU KEMENANGAN (WIN SCREEN) ---
+            // --- PEMICU KEMENANGAN (WIN SCREEN POP UP) ---
             gameState = "done";
-            playSound('win'); vibrate([100, 50, 100, 50, 300]); // Getaran kemenangan yang keren
+            playSound('win'); vibrate([100, 50, 100, 50, 300]); 
             
-            // Sembunyikan area game, tampilkan area Win
-            document.getElementById('game-view').style.display = 'none';
+            // Tampilkan popup
             document.getElementById('win-view').style.display = 'flex';
         } else { showFeedback("Duh, hasil akhirnya masih meleset. Coba hitung perkaliannya lagi!", "text-error"); }
+    }
+
+    // Fungsi untuk menutup pop up kemenangan
+    function closeWinPopup() {
+        document.getElementById('win-view').style.display = 'none';
     }
 
     function calculateHiddenAnswers() {
